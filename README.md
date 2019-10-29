@@ -18,8 +18,67 @@ httptee handles GET, POST, and all other http methods.
 Build
 -------------
 
-1. local ` go install ./...`
+1. local `go install ./...`
 1. linux `env GOOS=linux GOARCH=amd64 go install ./...`
+
+Demo
+-------------
+
+Using [hey](https://github.com/rakyll/hey) to do as HTTP load generator.
+
+```bash
+➜ gohttpd -p 9001 &
+[1] 2033
+➜ gohttpd -p 9002 &
+[2] 2110
+➜ httptee -l :9900 -a http://localhost:9001 -b http://localhost:9002  &
+[1] 5496
+2019/10/29 17:59:40 Starting httptee at :9900 sending to A: http://localhost:9001 and B: [{localhost:9002 http}]
+➜ hey -z 10s -q 1000 -n 100000 -c 1 -t 1 http://127.0.0.1:9900/say
+
+Summary:
+  Total:	10.0040 secs
+  Slowest:	0.0124 secs
+  Fastest:	0.0002 secs
+  Average:	0.0002 secs
+  Requests/sec:	993.2997
+
+  Total data:	437228 bytes
+  Size/request:	44 bytes
+
+Response time histogram:
+  0.000 [1]	|
+  0.001 [9913]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.003 [15]	|
+  0.004 [0]	|
+  0.005 [0]	|
+  0.006 [0]	|
+  0.007 [3]	|
+  0.009 [4]	|
+  0.010 [0]	|
+  0.011 [0]	|
+  0.012 [1]	|
+
+
+Latency distribution:
+  10% in 0.0002 secs
+  25% in 0.0002 secs
+  50% in 0.0002 secs
+  75% in 0.0002 secs
+  90% in 0.0003 secs
+  95% in 0.0003 secs
+  99% in 0.0006 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:	0.0000 secs, 0.0002 secs, 0.0124 secs
+  DNS-lookup:	0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:	0.0000 secs, 0.0000 secs, 0.0002 secs
+  resp wait:	0.0002 secs, 0.0001 secs, 0.0123 secs
+  resp read:	0.0000 secs, 0.0000 secs, 0.0005 secs
+
+Status code distribution:
+  [200]	9937 responses
+```
 
 Usage
 -------------
