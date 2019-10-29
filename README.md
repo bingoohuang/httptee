@@ -94,6 +94,40 @@ Using [hey](https://github.com/rakyll/hey) to do as HTTP load generator.
 Usage
 -------------
 
+```bash
+$ httptee -h
+Usage of httptee:
+  -a string
+    	primary endpoint. eg. http://localhost:8080/production
+  -a.rewrite
+    	rewrite host header for primary traffic
+  -a.timeout int
+    	timeout in millis for primary traffic (default 2500)
+  -b value
+    	where testing traffic goes. response are skipped. http://localhost:8081/test, allowed multiple times for multiple testing backends
+  -b.chanSize int
+    	alternate workers chan size (default 1000)
+  -b.percent int
+    	percentage of traffic to alternate (default 100)
+  -b.rewrite
+    	rewrite host header for alternate traffic
+  -b.timeout int
+    	timeout in millis for alternate traffic (default 1000)
+  -b.workers int
+    	alternate workers, default to cpu cores
+  -cert.file string
+    	TLS certificate file path
+  -close-connections
+    	close connections to clients and backends
+  -forward-client-ip
+    	forwarding of the client IP to the backend using 'X-Forwarded-For' and 'Forwarded' headers
+  -key.file string
+    	TLS private key file path
+  -l string
+    	port to accept requests (default ":8888")
+```
+
+
 ```
  ./httptee -l :8888 -a [http(s)://]localhost:9000 -b [http(s)://]localhost:9001 [-b [http(s)://]localhost:9002]
 ```
