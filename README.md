@@ -110,7 +110,7 @@ Usage of httptee:
   -b.percent int
     	percentage of traffic to alternate (default 100)
   -b.rewrite
-    	rewrite host header for alternate traffic
+    	rewrite host header for alternate traffic traffic
   -b.timeout int
     	timeout in millis for alternate traffic (default 1000)
   -b.workers int

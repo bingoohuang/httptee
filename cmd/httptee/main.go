@@ -25,7 +25,7 @@ func main() {
 	alternateChanSize := flag.Int("b.chanSize", 1000, "alternate workers chan size")
 	primaryHostRewrite := flag.Bool("a.rewrite", false, "rewrite host header for primary traffic")
 	alterHostRewrite := flag.Bool("b.rewrite", false, "rewrite host header for alternate traffic")
-	percent := flag.Int("b.percent", 100, "percentage of traffic to alternate")
+	percent := flag.Int("b.percent", 100, "percentage of traffic to alternate traffic")
 	tlsPrivateKey := flag.String("key.file", "", "TLS private key file path")
 	tlsCertificate := flag.String("cert.file", "", "TLS certificate file path")
 	forwardClientIP := flag.Bool("forward-client-ip", false,
