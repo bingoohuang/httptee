@@ -38,7 +38,7 @@ func main() {
 	log.Printf("Starting httptee at %s sending to A: %s and B: %s",
 		*listen, *primaryTarget, altServers)
 
-	h := httptee.Handler{
+	h := &httptee.Handler{
 		PrimaryTarget:        *primaryTarget,
 		Alternatives:         altServers,
 		Randomizer:           *rand.New(rand.NewSource(time.Now().UnixNano())),
@@ -50,6 +50,7 @@ func main() {
 		PrimaryHostRewrite:   *primaryHostRewrite,
 		PrimaryTimeout:       time.Duration(*primaryTimeout) * time.Millisecond,
 		CloseConnections:     *closeConns,
+		TransportCache:       make(map[httptee.TransportCacheKey]*http.Transport),
 	}
 
 	h.SetSchemes()
