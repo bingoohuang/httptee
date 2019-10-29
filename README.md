@@ -24,7 +24,13 @@ Build
 Demo
 -------------
 
-Using [hey](https://github.com/rakyll/hey) to do as HTTP load generator.
+Using [hey](https://github.com/rakyll/hey) to do as HTTP load generator. 
+
+> I’m using hey tool because it’s simple and allows generating constant load instead of bombarding as hard as possible like many other tools do (wrk, apache benchmark, siege).
+> [nginx mirroring tips and tricks](https://alex.dzyoba.com/blog/nginx-mirror/)
+
+> 我用 hey 来测试压力，因为它很简单，可以施加稳定的负载，其他工具的负载施加很不稳定（例如，wrk, apache benchmark, siege）。
+> [Nginx 流量镜像使用技巧](https://mp.weixin.qq.com/s/GpFafOWtlKIrmEftKE-Vdg)
 
 ```bash
 ➜ gohttpd -p 9001 &
