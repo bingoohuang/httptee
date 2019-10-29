@@ -6,11 +6,12 @@ import (
 	"strings"
 )
 
-func updateForwardedHeaders(request *http.Request) {
+// InsertForwardedHeaders insert header X-Forwarded-For and Forwarded headers.
+func InsertForwardedHeaders(request *http.Request) {
 	var remoteIP string
 
-	if positionOfColon := strings.LastIndex(request.RemoteAddr, ":"); positionOfColon != -1 {
-		remoteIP = request.RemoteAddr[:positionOfColon]
+	if pos := strings.LastIndex(request.RemoteAddr, ":"); pos != -1 {
+		remoteIP = request.RemoteAddr[:pos]
 	} else {
 		log.Printf("The default format of req.RemoteAddr should be IP:Port but was %s\n", remoteIP)
 		remoteIP = request.RemoteAddr

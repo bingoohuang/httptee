@@ -10,22 +10,10 @@ import (
 // PrimaryTarget and the Alternate target discarding the Alternate response
 func (h *Handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	if h.ForwardClientIP {
-		updateForwardedHeaders(req)
+		InsertForwardedHeaders(req)
 	}
 
-	if h.Percent == 100 || h.Randomizer.Int()*100 < h.Percent {
-		for _, alt := range h.Alternatives {
-			alterReq := DuplicateRequest(req)
-
-			setRequestTarget(alterReq, alt.Endpoint, alt.Scheme)
-
-			if h.AlternateHostRewrite {
-				alterReq.Host = alt.Endpoint
-			}
-
-			h.AlterRequestChan <- AlternativeReq{req: alterReq, timeout: h.AlternateTimeout, scheme: alt.Scheme}
-		}
-	}
+	h.tee(req)
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -33,13 +21,13 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		}
 	}()
 
-	setRequestTarget(req, h.PrimaryTarget, h.TargetScheme)
+	SetRequestTarget(req, h.Primary)
 
 	if h.PrimaryHostRewrite {
-		req.Host = h.PrimaryTarget
+		req.Host = h.Primary.Scheme
 	}
 
-	if resp := h.handleRequest(req, h.PrimaryTimeout, h.TargetScheme); resp != nil {
+	if resp := HandleRequest(req, h.primaryTransport); resp != nil {
 		defer resp.Body.Close()
 
 		// Forward response headers.
@@ -51,5 +39,23 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 		// Forward response body.
 		_, _ = io.Copy(w, resp.Body)
+	}
+}
+
+func (h *Handler) tee(req *http.Request) {
+	if !(h.Percent == 100 || h.randomizer.Int()*100 < h.Percent) {
+		return
+	}
+
+	for _, alt := range h.Alternatives {
+		alterReq := DuplicateRequest(req)
+
+		SetRequestTarget(alterReq, alt)
+
+		if h.AlternateHostRewrite {
+			alterReq.Host = alt.Endpoint
+		}
+
+		h.alterRequestChan <- AlternativeReq{req: alterReq, timeout: h.AlternateTimeout, scheme: alt.Scheme}
 	}
 }

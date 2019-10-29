@@ -4,7 +4,6 @@ import (
 	"crypto/tls"
 	"flag"
 	"log"
-	"math/rand"
 	"net"
 	"net/http"
 	"time"
@@ -26,7 +25,7 @@ func main() {
 	alternateChanSize := flag.Int("b.chanSize", 1000, "alternate workers chan size")
 	primaryHostRewrite := flag.Bool("a.rewrite", false, "rewrite host header for primary traffic")
 	alterHostRewrite := flag.Bool("b.rewrite", false, "rewrite host header for alternate traffic")
-	percent := flag.Int("percent", 100, "percentage of traffic to alternate")
+	percent := flag.Int("b.percent", 100, "percentage of traffic to alternate")
 	tlsPrivateKey := flag.String("key.file", "", "TLS private key file path")
 	tlsCertificate := flag.String("cert.file", "", "TLS certificate file path")
 	forwardClientIP := flag.Bool("forward-client-ip", false,
@@ -39,27 +38,17 @@ func main() {
 		*listen, *primaryTarget, altServers)
 
 	h := &httptee.Handler{
-		PrimaryTarget:        *primaryTarget,
 		Alternatives:         altServers,
-		Randomizer:           *rand.New(rand.NewSource(time.Now().UnixNano())),
 		ForwardClientIP:      *forwardClientIP,
 		Percent:              *percent,
 		AlternateTimeout:     time.Duration(*alterTimeout) * time.Millisecond,
 		AlternateHostRewrite: *alterHostRewrite,
-		AlterRequestChan:     make(chan httptee.AlternativeReq, *alternateChanSize),
 		PrimaryHostRewrite:   *primaryHostRewrite,
 		PrimaryTimeout:       time.Duration(*primaryTimeout) * time.Millisecond,
 		CloseConnections:     *closeConns,
-		TransportCache:       make(map[httptee.TransportCacheKey]*http.Transport),
 	}
 
-	h.SetSchemes()
-
-	httptee.StartWorkers(*alternateWorkers, func() {
-		for req := range h.AlterRequestChan {
-			h.HandleAlterRequest(req)
-		}
-	})
+	h.Setup(*primaryTarget, *alternateWorkers, *alternateChanSize)
 
 	server := &http.Server{Handler: h}
 

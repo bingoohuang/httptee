@@ -32,6 +32,11 @@ Using [hey](https://github.com/rakyll/hey) to do as HTTP load generator.
 > 我用 hey 来测试压力，因为它很简单，可以施加稳定的负载，其他工具的负载施加很不稳定（例如，wrk, apache benchmark, siege）。
 > [Nginx 流量镜像使用技巧](https://mp.weixin.qq.com/s/GpFafOWtlKIrmEftKE-Vdg)
 
+
+1. `go get github.com/bingoohuang/golang-trial/cmd/gohttpd`
+1. `go get github.com/bingoohuang/httptee/cmd/httptee`
+1. `go get github.com/rakyll/hey`
+
 ```bash
 ➜ gohttpd -p 9001 &
 [1] 2033
