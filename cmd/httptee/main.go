@@ -15,10 +15,10 @@ func main() {
 	var altServers httptee.Backends
 
 	flag.Var(&altServers, "b", "where testing traffic goes. response are skipped. "+
-		"http://localhost:8081/test, allowed multiple times for multiple testing backends")
+		"http://localhost:8081, allowed multiple times for multiple testing backends")
 
 	listen := flag.String("l", ":8888", "port to accept requests")
-	primaryTarget := flag.String("a", "", "primary endpoint. eg. http://localhost:8080/production")
+	primaryTarget := flag.String("a", "", "primary endpoint. eg. http://localhost:8080")
 	primaryTimeout := flag.Int("a.timeout", 2500, "timeout in millis for primary traffic")
 	alterTimeout := flag.Int("b.timeout", 1000, "timeout in millis for alternate traffic")
 	alternateWorkers := flag.Int("b.workers", 0, "alternate workers, default to cpu cores")

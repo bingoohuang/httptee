@@ -53,7 +53,7 @@ func (h *Handler) tee(req *http.Request) {
 		SetRequestTarget(alterReq, alt)
 
 		if h.AlternateHostRewrite {
-			alterReq.Host = alt.Endpoint
+			alterReq.Host = alt.Host
 		}
 
 		h.alterRequestChan <- AlternativeReq{req: alterReq, timeout: h.AlternateTimeout, scheme: alt.Scheme}

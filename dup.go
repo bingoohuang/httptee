@@ -17,7 +17,7 @@ func DuplicateRequest(request *http.Request) *http.Request {
 
 	return &http.Request{
 		Method:        request.Method,
-		URL:           request.URL,
+		URL:           CloneURL(request.URL),
 		Proto:         request.Proto,
 		ProtoMajor:    request.ProtoMajor,
 		ProtoMinor:    request.ProtoMinor,

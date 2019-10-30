@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// Handler contains the address of the main PrimaryTarget and the one for the Endpoint target
+// Handler contains the address of the main PrimaryTarget and the one for the Host target
 type Handler struct {
 	Primary      Backend
 	Alternatives []Backend
@@ -29,8 +29,8 @@ type Handler struct {
 
 // Backend represents the backend server.
 type Backend struct {
-	Endpoint string
-	Scheme   string
+	Host   string
+	Scheme string
 }
 
 // Backends represents array of backend servers.
@@ -42,7 +42,7 @@ func (i *Backends) String() string {
 
 // Set sets backends
 func (i *Backends) Set(value string) error {
-	*i = append(*i, SchemeAndHost(value))
+	*i = append(*i, schemeAndHost(value))
 
 	return nil
 }
