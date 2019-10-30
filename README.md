@@ -171,3 +171,136 @@ endpoints do not support this.
 
 *  `-close-connections` (default is false)
 
+Influxdb dual writing benchmarking
+-------------
+
+1. 建立两个节点 `docker run --name influxdb1 -p 18086:8086 -d  influxdb:1.5.4`， `docker run --name influxdb2 -p 18087:8086 -d  influxdb:1.5.4`
+1. 在两个节点上建立test database，下面以influxdb1为例，需要在influxdb2同理执行。
+
+    ```bash
+    ➜ docker exec -it influxdb1 bash
+    root@4c638b3e019c:/# influx
+    Connected to http://localhost:8086 version 1.5.4
+    InfluxDB shell version: 1.5.4
+    > create database test;
+    > show databases;
+    name: databases
+    name
+    ----
+    _internal
+    test
+    ```
+
+1. 使用httpie验证
+
+    ```bash
+    ➜ echo "cpu,host=server02,region=uswest value=1 1434055561000000000" | http http://localhost:18086/write?db=test
+    HTTP/1.1 204 No Content
+    Content-Type: application/json
+    Date: Wed, 30 Oct 2019 02:49:29 GMT
+    Request-Id: e47d9b96-fabf-11e9-8011-000000000000
+    X-Influxdb-Build: OSS
+    X-Influxdb-Version: 1.5.4
+    X-Request-Id: e47d9b96-fabf-11e9-8011-000000000000
+    
+    
+    
+    ```
+
+1. 构建双写代理 `httptee -l :19000 -a http://localhost:18086 -b http://localhost:18087`
+1. hey单次验证 `hey -n 1 -c 1  -m POST -d  "cpu,host=server02,region=uswest value=1 1434055561000000000" "http://localhost:19000/write?db=test"`
+1. hey直连压测 `hey -z 10s -q 3000 -n 100000 -c 1 -t 1 -m POST -d  "cpu,host=server02,region=uswest value=1 1434055561000000000" "http://localhost:19000/write?db=test"`
+1. siege脚本 `siege -c20 -r1000 "http://127.0.0.1:9096/write?db=test POST cpu,host=server02,region=uswest value=1 1434055561000000000"`
+
+
+```bash
+➜  hey -z 10s -q 600 -n 100000 -c 1 -t 1 -m POST -d  "cpu,host=server02,region=uswest value=1 1434055561000000000" "http://localhost:18086/write?db=test"
+
+Summary:
+  Total:	10.0018 secs
+  Slowest:	0.0071 secs
+  Fastest:	0.0015 secs
+  Average:	0.0019 secs
+  Requests/sec:	517.5057
+
+
+Response time histogram:
+  0.002 [1]	|
+  0.002 [4609]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.003 [523]	|■■■■■
+  0.003 [28]	|
+  0.004 [5]	|
+  0.004 [2]	|
+  0.005 [4]	|
+  0.005 [0]	|
+  0.006 [2]	|
+  0.007 [1]	|
+  0.007 [1]	|
+
+
+Latency distribution:
+  10% in 0.0017 secs
+  25% in 0.0018 secs
+  50% in 0.0019 secs
+  75% in 0.0020 secs
+  90% in 0.0021 secs
+  95% in 0.0022 secs
+  99% in 0.0026 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:	0.0000 secs, 0.0015 secs, 0.0071 secs
+  DNS-lookup:	0.0000 secs, 0.0000 secs, 0.0010 secs
+  req write:	0.0000 secs, 0.0000 secs, 0.0001 secs
+  resp wait:	0.0019 secs, 0.0015 secs, 0.0071 secs
+  resp read:	0.0000 secs, 0.0000 secs, 0.0003 secs
+
+Status code distribution:
+  [204]	5176 responses
+
+
+
+➜  hey -z 10s -q 600 -n 100000 -c 1 -t 1 -m POST -d  "cpu,host=server02,region=uswest value=1 1434055561000000000" "http://localhost:19000/write?db=test"
+
+Summary:
+  Total:	10.0018 secs
+  Slowest:	0.0416 secs
+  Fastest:	0.0019 secs
+  Average:	0.0028 secs
+  Requests/sec:	358.9361
+
+
+Response time histogram:
+  0.002 [1]	|
+  0.006 [3578]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.010 [8]	|
+  0.014 [2]	|
+  0.018 [0]	|
+  0.022 [0]	|
+  0.026 [0]	|
+  0.030 [0]	|
+  0.034 [0]	|
+  0.038 [0]	|
+  0.042 [1]	|
+
+
+Latency distribution:
+  10% in 0.0023 secs
+  25% in 0.0024 secs
+  50% in 0.0026 secs
+  75% in 0.0030 secs
+  90% in 0.0034 secs
+  95% in 0.0037 secs
+  99% in 0.0047 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:	0.0000 secs, 0.0019 secs, 0.0416 secs
+  DNS-lookup:	0.0000 secs, 0.0000 secs, 0.0010 secs
+  req write:	0.0000 secs, 0.0000 secs, 0.0002 secs
+  resp wait:	0.0027 secs, 0.0019 secs, 0.0414 secs
+  resp read:	0.0000 secs, 0.0000 secs, 0.0001 secs
+
+Status code distribution:
+  [204]	3590 responses
+
+
+```
