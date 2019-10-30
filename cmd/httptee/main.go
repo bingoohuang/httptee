@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"time"
 
+	// _ "net/http/pprof" // nolint
+
 	"github.com/bingoohuang/httptee"
 )
 
@@ -32,7 +34,11 @@ func main() {
 		"forwarding of the client IP to the backend using 'X-Forwarded-For' and 'Forwarded' headers")
 	closeConns := flag.Bool("close-connections", false, "close connections to clients and backends")
 
+	//pprofAddr := httptee.PprofAddrFlag()
+
 	flag.Parse()
+
+	//httptee.StartPprof(*pprofAddr)
 
 	log.Printf("Starting httptee at %s sending to A: %s and B: %s",
 		*listen, *primaryTarget, altServers)

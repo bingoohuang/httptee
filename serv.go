@@ -27,7 +27,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		req.Host = h.Primary.Scheme
 	}
 
-	if resp := HandleRequest(req, h.primaryTransport); resp != nil {
+	if resp := handleRequest(req, h.primaryTransport); resp != nil {
 		defer resp.Body.Close()
 
 		// Forward response headers.

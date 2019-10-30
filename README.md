@@ -207,7 +207,29 @@ Influxdb dual writing benchmarking
     
     ```
 
-1. 构建双写代理 `httptee -l :19000 -a http://localhost:18086 -b http://localhost:18087`
+1. 构建httptee双写代理 `httptee -l :19000 -a http://localhost:18086 -b http://localhost:18087`
+1. 构建influxdb-relay代理 `go get -u github.com/vente-privee/influxdb-relay`, `influxdb-relay -config=relay.toml`
+    
+    ```toml
+    # relay.toml
+    # InfluxDB && Prometheus
+    [[http]]
+    name = "example-http-influxdb"
+    bind-addr = "0.0.0.0:9096"
+    
+    [[http.output]]
+    name = "local-influxdb01"
+    location = "http://127.0.0.1:18086/"
+    endpoints = {write="/write", write_prom="/api/v1/prom/write", ping="/ping", query="/query"}
+    timeout = "10s"
+    
+    [[http.output]]
+    name = "local-influxdb02"
+    location = "http://127.0.0.1:18087/"
+    endpoints = {write="/write", write_prom="/api/v1/prom/write", ping="/ping", query="/query"}
+    timeout = "10s"
+    ```
+        
 1. hey单次验证 `hey -n 1 -c 1  -m POST -d  "cpu,host=server02,region=uswest value=1 1434055561000000000" "http://localhost:19000/write?db=test"`
 1. hey直连压测 `hey -z 10s -q 3000 -n 100000 -c 1 -t 1 -m POST -d  "cpu,host=server02,region=uswest value=1 1434055561000000000" "http://localhost:19000/write?db=test"`
 1. siege脚本 `siege -c20 -r1000 "http://127.0.0.1:9096/write?db=test POST cpu,host=server02,region=uswest value=1 1434055561000000000"`
@@ -302,5 +324,47 @@ Details (average, fastest, slowest):
 Status code distribution:
   [204]	3590 responses
 
+➜  hey -z 10s -q 600 -n 100000 -c 1 -t 1 -m POST -d  "cpu,host=server02,region=uswest value=1 1434055561000000000" "http://localhost:9096/write?db=test"
+
+Summary:
+  Total:	10.0050 secs
+  Slowest:	0.0800 secs
+  Fastest:	0.0017 secs
+  Average:	0.0023 secs
+  Requests/sec:	433.2848
+
+
+Response time histogram:
+  0.002 [1]	|
+  0.010 [4332]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.017 [0]	|
+  0.025 [1]	|
+  0.033 [0]	|
+  0.041 [0]	|
+  0.049 [0]	|
+  0.057 [0]	|
+  0.064 [0]	|
+  0.072 [0]	|
+  0.080 [1]	|
+
+
+Latency distribution:
+  10% in 0.0020 secs
+  25% in 0.0021 secs
+  50% in 0.0022 secs
+  75% in 0.0024 secs
+  90% in 0.0026 secs
+  95% in 0.0028 secs
+  99% in 0.0032 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:	0.0000 secs, 0.0017 secs, 0.0800 secs
+  DNS-lookup:	0.0000 secs, 0.0000 secs, 0.0012 secs
+  req write:	0.0000 secs, 0.0000 secs, 0.0004 secs
+  resp wait:	0.0022 secs, 0.0016 secs, 0.0800 secs
+  resp read:	0.0000 secs, 0.0000 secs, 0.0005 secs
+
+Status code distribution:
+  [204]	4335 responses
 
 ```

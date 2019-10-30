@@ -47,38 +47,38 @@ func (h *Handler) Setup(primaryTarget string, alternateWorkers, alternateChanSiz
 
 		StartWorkers(alternateWorkers, func() {
 			for req := range h.alterRequestChan {
-				h.HandleAlterRequest(req)
+				h.handleAlterRequest(req)
 			}
 		})
 	}
 }
 
 // MakeTransport makes a new http.Transport.
-func MakeTransport(timeout time.Duration, closeConnections bool) *http.Transport {
+func MakeTransport(t time.Duration, closeConnections bool) *http.Transport {
 	return &http.Transport{
-		DialContext:           (&net.Dialer{Timeout: timeout, KeepAlive: 10 * timeout}).DialContext,
+		DialContext:           (&net.Dialer{Timeout: t, KeepAlive: 10 * t}).DialContext,
 		DisableKeepAlives:     closeConnections,
-		TLSHandshakeTimeout:   timeout,
-		ResponseHeaderTimeout: timeout,
+		TLSHandshakeTimeout:   t,
+		ResponseHeaderTimeout: t,
 		TLSClientConfig:       &tls.Config{InsecureSkipVerify: true}, // nolint
 	}
 }
 
-// HandleAlterRequest duplicate req and sent it to alternative Backend
-func (h *Handler) HandleAlterRequest(r AlternativeReq) {
+// handleAlterRequest duplicate req and sent it to alternative Backend
+func (h *Handler) handleAlterRequest(r AlternativeReq) {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Println("Recovered in ServeHTTP(alternate req) from:", r)
 		}
 	}()
 
-	if rsp := HandleRequest(r.req, h.alterTransport); rsp != nil {
+	if rsp := handleRequest(r.req, h.alterTransport); rsp != nil {
 		_ = rsp.Body.Close()
 	}
 }
 
-// HandleRequest sends a req and returns the response.
-func HandleRequest(request *http.Request, t http.RoundTripper) (rsp *http.Response) {
+// handleRequest sends a req and returns the response.
+func handleRequest(request *http.Request, t http.RoundTripper) (rsp *http.Response) {
 	var err error
 
 	if rsp, err = t.RoundTrip(request); err != nil {

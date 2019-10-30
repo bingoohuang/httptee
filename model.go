@@ -29,8 +29,8 @@ type Handler struct {
 
 // Backend represents the backend server.
 type Backend struct {
-	Host   string
 	Scheme string
+	Host   string
 }
 
 // Backends represents array of backend servers.
