@@ -208,7 +208,7 @@ Influxdb dual writing benchmarking
     ```
 
 1. 构建httptee双写代理 `httptee -l :19000 -a http://localhost:18086 -b http://localhost:18087`
-1. 构建influxdb-relay代理 `go get -u github.com/vente-privee/influxdb-relay`, `influxdb-relay -config=relay.toml`
+1. 构建influxdb-relay代理 `go get -u github.com/strike-team/influxdb-relay`, `influxdb-relay -config=relay.toml`
     
     ```toml
     # relay.toml
