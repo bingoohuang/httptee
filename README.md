@@ -233,7 +233,11 @@ Influxdb dual writing benchmarking
 1. hey单次验证 `hey -n 1 -c 1  -m POST -d  "cpu,host=server02,region=uswest value=1 1434055561000000000" "http://localhost:19000/write?db=test"`
 1. hey直连压测 `hey -z 10s -q 3000 -n 100000 -c 1 -t 1 -m POST -d  "cpu,host=server02,region=uswest value=1 1434055561000000000" "http://localhost:19000/write?db=test"`
 1. siege脚本 `siege -c20 -r1000 "http://127.0.0.1:9096/write?db=test POST cpu,host=server02,region=uswest value=1 1434055561000000000"`
-
+1. hey 压测结果
+    
+    |raw|influxdb-relay|httptee|
+   |---|---|---|
+   | 557.0184|553.4257|553.3011|
 
 ```bash
 ➜  hey -z 10s -q 600 -n 100000 -c 1 -t 1 -m POST -d  "cpu,host=server02,region=uswest value=1 1434055561000000000" "http://localhost:18086/write?db=test"
