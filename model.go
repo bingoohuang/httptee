@@ -20,8 +20,8 @@ type Handler struct {
 	AlternateTimeout time.Duration
 	PrimaryTimeout   time.Duration
 
-	alterRequestChan chan AlternativeReq
-	randomizer       rand.Rand
+	jobQueue   JobPool
+	randomizer rand.Rand
 
 	primaryTransport *http.Transport
 	alterTransport   *http.Transport
@@ -52,4 +52,11 @@ type AlternativeReq struct {
 	req     *http.Request
 	timeout time.Duration
 	scheme  string
+	Handler *Handler
+}
+
+// Do do the request.
+func (r AlternativeReq) Do() error {
+	r.Handler.handleAlterRequest(r)
+	return nil
 }

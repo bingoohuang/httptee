@@ -239,132 +239,136 @@ Influxdb dual writing benchmarking
 ➜  hey -z 10s -q 600 -n 100000 -c 1 -t 1 -m POST -d  "cpu,host=server02,region=uswest value=1 1434055561000000000" "http://localhost:18086/write?db=test"
 
 Summary:
-  Total:	10.0018 secs
-  Slowest:	0.0071 secs
-  Fastest:	0.0015 secs
-  Average:	0.0019 secs
-  Requests/sec:	517.5057
+  Total:	10.0015 secs
+  Slowest:	0.3385 secs
+  Fastest:	0.0013 secs
+  Average:	0.0017 secs
+  Requests/sec:	557.0184
 
 
 Response time histogram:
-  0.002 [1]	|
-  0.002 [4609]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  0.003 [523]	|■■■■■
-  0.003 [28]	|
-  0.004 [5]	|
-  0.004 [2]	|
-  0.005 [4]	|
-  0.005 [0]	|
-  0.006 [2]	|
-  0.007 [1]	|
-  0.007 [1]	|
+  0.001 [1]	|
+  0.035 [5567]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.069 [1]	|
+  0.102 [0]	|
+  0.136 [0]	|
+  0.170 [0]	|
+  0.204 [1]	|
+  0.237 [0]	|
+  0.271 [0]	|
+  0.305 [0]	|
+  0.338 [1]	|
 
 
 Latency distribution:
-  10% in 0.0017 secs
-  25% in 0.0018 secs
-  50% in 0.0019 secs
-  75% in 0.0020 secs
-  90% in 0.0021 secs
-  95% in 0.0022 secs
-  99% in 0.0026 secs
+  10% in 0.0014 secs
+  25% in 0.0015 secs
+  50% in 0.0015 secs
+  75% in 0.0016 secs
+  90% in 0.0017 secs
+  95% in 0.0018 secs
+  99% in 0.0025 secs
 
 Details (average, fastest, slowest):
-  DNS+dialup:	0.0000 secs, 0.0015 secs, 0.0071 secs
-  DNS-lookup:	0.0000 secs, 0.0000 secs, 0.0010 secs
-  req write:	0.0000 secs, 0.0000 secs, 0.0001 secs
-  resp wait:	0.0019 secs, 0.0015 secs, 0.0071 secs
-  resp read:	0.0000 secs, 0.0000 secs, 0.0003 secs
+  DNS+dialup:	0.0000 secs, 0.0013 secs, 0.3385 secs
+  DNS-lookup:	0.0000 secs, 0.0000 secs, 0.0008 secs
+  req write:	0.0000 secs, 0.0000 secs, 0.0002 secs
+  resp wait:	0.0016 secs, 0.0012 secs, 0.3383 secs
+  resp read:	0.0000 secs, 0.0000 secs, 0.0001 secs
 
 Status code distribution:
-  [204]	5176 responses
-
-
+  [204]	5571 responses
 
 ➜  hey -z 10s -q 600 -n 100000 -c 1 -t 1 -m POST -d  "cpu,host=server02,region=uswest value=1 1434055561000000000" "http://localhost:19000/write?db=test"
 
 Summary:
   Total:	10.0018 secs
-  Slowest:	0.0416 secs
-  Fastest:	0.0019 secs
-  Average:	0.0028 secs
-  Requests/sec:	358.9361
+  Slowest:	0.1301 secs
+  Fastest:	0.0014 secs
+  Average:	0.0018 secs
+  Requests/sec:	553.3011
 
 
 Response time histogram:
-  0.002 [1]	|
-  0.006 [3578]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  0.010 [8]	|
-  0.014 [2]	|
-  0.018 [0]	|
-  0.022 [0]	|
-  0.026 [0]	|
-  0.030 [0]	|
-  0.034 [0]	|
-  0.038 [0]	|
-  0.042 [1]	|
+  0.001 [1]	|
+  0.014 [5528]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.027 [2]	|
+  0.040 [1]	|
+  0.053 [1]	|
+  0.066 [0]	|
+  0.079 [0]	|
+  0.092 [0]	|
+  0.104 [0]	|
+  0.117 [0]	|
+  0.130 [1]	|
 
 
 Latency distribution:
-  10% in 0.0023 secs
-  25% in 0.0024 secs
-  50% in 0.0026 secs
-  75% in 0.0030 secs
-  90% in 0.0034 secs
-  95% in 0.0037 secs
-  99% in 0.0047 secs
+  10% in 0.0016 secs
+  25% in 0.0016 secs
+  50% in 0.0017 secs
+  75% in 0.0018 secs
+  90% in 0.0021 secs
+  95% in 0.0023 secs
+  99% in 0.0029 secs
 
 Details (average, fastest, slowest):
-  DNS+dialup:	0.0000 secs, 0.0019 secs, 0.0416 secs
-  DNS-lookup:	0.0000 secs, 0.0000 secs, 0.0010 secs
-  req write:	0.0000 secs, 0.0000 secs, 0.0002 secs
-  resp wait:	0.0027 secs, 0.0019 secs, 0.0414 secs
-  resp read:	0.0000 secs, 0.0000 secs, 0.0001 secs
+  DNS+dialup:	0.0000 secs, 0.0014 secs, 0.1301 secs
+  DNS-lookup:	0.0000 secs, 0.0000 secs, 0.0046 secs
+  req write:	0.0000 secs, 0.0000 secs, 0.0004 secs
+  resp wait:	0.0018 secs, 0.0013 secs, 0.1301 secs
+  resp read:	0.0000 secs, 0.0000 secs, 0.0008 secs
 
 Status code distribution:
-  [204]	3590 responses
+  [204]	5534 responses
 
 ➜  hey -z 10s -q 600 -n 100000 -c 1 -t 1 -m POST -d  "cpu,host=server02,region=uswest value=1 1434055561000000000" "http://localhost:9096/write?db=test"
 
 Summary:
-  Total:	10.0050 secs
-  Slowest:	0.0800 secs
-  Fastest:	0.0017 secs
-  Average:	0.0023 secs
-  Requests/sec:	433.2848
+  Total:	10.0013 secs
+  Slowest:	0.0141 secs
+  Fastest:	0.0014 secs
+  Average:	0.0018 secs
+  Requests/sec:	553.4257
 
 
 Response time histogram:
-  0.002 [1]	|
-  0.010 [4332]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  0.017 [0]	|
-  0.025 [1]	|
-  0.033 [0]	|
-  0.041 [0]	|
-  0.049 [0]	|
-  0.057 [0]	|
-  0.064 [0]	|
-  0.072 [0]	|
-  0.080 [1]	|
+  0.001 [1]	|
+  0.003 [5463]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.004 [57]	|
+  0.005 [4]	|
+  0.006 [2]	|
+  0.008 [2]	|
+  0.009 [1]	|
+  0.010 [1]	|
+  0.012 [2]	|
+  0.013 [1]	|
+  0.014 [1]	|
 
 
 Latency distribution:
-  10% in 0.0020 secs
-  25% in 0.0021 secs
-  50% in 0.0022 secs
-  75% in 0.0024 secs
-  90% in 0.0026 secs
-  95% in 0.0028 secs
-  99% in 0.0032 secs
+  10% in 0.0016 secs
+  25% in 0.0017 secs
+  50% in 0.0017 secs
+  75% in 0.0018 secs
+  90% in 0.0020 secs
+  95% in 0.0022 secs
+  99% in 0.0028 secs
 
 Details (average, fastest, slowest):
-  DNS+dialup:	0.0000 secs, 0.0017 secs, 0.0800 secs
-  DNS-lookup:	0.0000 secs, 0.0000 secs, 0.0012 secs
-  req write:	0.0000 secs, 0.0000 secs, 0.0004 secs
-  resp wait:	0.0022 secs, 0.0016 secs, 0.0800 secs
-  resp read:	0.0000 secs, 0.0000 secs, 0.0005 secs
+  DNS+dialup:	0.0000 secs, 0.0014 secs, 0.0141 secs
+  DNS-lookup:	0.0000 secs, 0.0000 secs, 0.0008 secs
+  req write:	0.0000 secs, 0.0000 secs, 0.0002 secs
+  resp wait:	0.0017 secs, 0.0013 secs, 0.0140 secs
+  resp read:	0.0000 secs, 0.0000 secs, 0.0001 secs
 
 Status code distribution:
-  [204]	4335 responses
+  [204]	5535 responses
 
 ```
+
+
+Thanks
+-------------
+
+1. [Handling 1 Million Requests per Minute with Golang](https://medium.com/smsjunk/handling-1-million-requests-per-minute-with-golang-f70ac505fcaa)

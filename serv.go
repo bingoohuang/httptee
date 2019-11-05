@@ -56,6 +56,6 @@ func (h *Handler) tee(req *http.Request) {
 			alterReq.Host = alt.Host
 		}
 
-		h.alterRequestChan <- AlternativeReq{req: alterReq, timeout: h.AlternateTimeout, scheme: alt.Scheme}
+		h.jobQueue <- AlternativeReq{Handler: h, req: alterReq, timeout: h.AlternateTimeout, scheme: alt.Scheme}
 	}
 }

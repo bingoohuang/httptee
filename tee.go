@@ -36,20 +36,16 @@ func SetRequestTarget(request *http.Request, b Backend) {
 }
 
 // Setup setup handler.
-func (h *Handler) Setup(primaryTarget string, alternateWorkers, alternateChanSize int) {
+func (h *Handler) Setup(primaryTarget string, maxWorkers, maxQueue int) {
 	h.randomizer = *rand.New(rand.NewSource(time.Now().UnixNano()))
 	h.Primary = schemeAndHost(primaryTarget)
 	h.primaryTransport = MakeTransport(h.PrimaryTimeout, h.CloseConnections)
 	h.alterTransport = MakeTransport(h.AlternateTimeout, h.CloseConnections)
 
 	if len(h.Alternatives) > 0 {
-		h.alterRequestChan = make(chan AlternativeReq, alternateChanSize)
+		h.jobQueue = make(JobPool, maxQueue)
 
-		StartWorkers(alternateWorkers, func() {
-			for req := range h.alterRequestChan {
-				h.handleAlterRequest(req)
-			}
-		})
+		NewDispatcher(h.jobQueue, maxWorkers).Run()
 	}
 }
 

@@ -23,8 +23,8 @@ func main() {
 	primaryTarget := flag.String("a", "", "primary endpoint. eg. http://localhost:8080")
 	primaryTimeout := flag.Int("a.timeout", 2500, "timeout in millis for primary traffic")
 	alterTimeout := flag.Int("b.timeout", 1000, "timeout in millis for alternate traffic")
-	alternateWorkers := flag.Int("b.workers", 0, "alternate workers, default to cpu cores")
-	alternateChanSize := flag.Int("b.chanSize", 1000, "alternate workers chan size")
+	maxWorkers := flag.Int("max.workers", 0, "alternate max workers, default to cpu cores")
+	maxQueue := flag.Int("max.queue", 1000, "alternate workers chan queue size")
 	primaryHostRewrite := flag.Bool("a.rewrite", false, "rewrite host header for primary traffic")
 	alterHostRewrite := flag.Bool("b.rewrite", false, "rewrite host header for alternate traffic")
 	percent := flag.Int("b.percent", 100, "percentage of traffic to alternate traffic")
@@ -54,7 +54,7 @@ func main() {
 		CloseConnections:     *closeConns,
 	}
 
-	h.Setup(*primaryTarget, *alternateWorkers, *alternateChanSize)
+	h.Setup(*primaryTarget, *maxWorkers, *maxQueue)
 
 	server := &http.Server{Handler: h}
 
